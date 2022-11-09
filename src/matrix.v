@@ -8,18 +8,20 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     integer pix = 0;
     integer size = 64;     //    -- Number of LEDs
     wire clk = io_in[0];
-    wire reset = io_in[1];
+    //wire reset = io_in[1];
 
-    reg [0:0] strip_1 = 0;
     reg [0:0] clock_1 = 0;
+    reg [0:0] strip_1 = 0;
     
-    assign io_out[0] = strip_1;
-    assign io_out[1] = clock_1;
+    assign io_out[0] = clock_1;
+    assign io_out[1] = strip_1;
 
     reg [64-1:0] fonts [0:26-1]; 
 
     reg [1:0] mem [0:64-1]; 
-    
+
+    integer counter = 0;
+    reg [0:0] clk2 = 0;
 
     // external clock is 6kHz, so need 10 bit counter
     reg [32:0] counter1;
@@ -61,14 +63,23 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
         fonts[25] = 64'h00_00_3F_19_0C_26_3F_00;
     end 
 
+`ifdef FPGA
     always @(posedge clk) begin
-      
+        if (counter == 2000) begin
+            clk2 = ~clk2;
+            counter = 0;
+        end else begin
+            counter <= counter + 1;
+        end
+    end
 
-        clock_1 = ~clock_1 ;   
+    always @(posedge clk2) begin
+`else
+    always @(posedge clk) begin
+`endif
 
-
+        clock_1 = ~clock_1 ;
         if (clock_1 == 1) begin 
-
             if (counter1 < 32) begin
                 strip_1 = 0;
             end else if (counter1 < 32 + (32 * 64)) begin
@@ -79,9 +90,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 counter1 = 0;
                 strip_1 = 0;
             end
-
             counter1 = counter1 + 1;
-
         end
 
 
