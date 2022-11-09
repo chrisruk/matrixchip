@@ -10,7 +10,8 @@ module tb (
     // testbench is controlled by test.py
     input clk,
     input rst,
-    output [6:0] segments
+    output clock_1,
+    output strip_1
    );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
@@ -22,11 +23,10 @@ module tb (
 
     // wire up the inputs and outputs
     wire [7:0] inputs = {6'b0, rst, clk};
-    wire [7:0] outputs;
-    assign segments = outputs[6:0];
+    wire [7:0] outputs = {6'b0, strip_1, clock_1};
 
     // instantiate the DUT
-    seven_segment_seconds #(.MAX_COUNT(100)) seven_segment_seconds(
+    chrisruk_matrix #(.MAX_COUNT(100)) chrisruk_matrix(
         .io_in  (inputs),
         .io_out (outputs)
         );
