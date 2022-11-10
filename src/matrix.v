@@ -78,7 +78,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 strip_1 = 0;
             end else if (counter1 < 32 + (32 * (8*8))) begin
 
-                if((pidx / 8) == 0) begin
+                /*if((pidx / 8) == 0) begin
                     zz = 8 - 1 - pidx;
                 end else if((pidx / 8) == 2) begin
                     zz = 40 - 1 -  pidx;
@@ -88,7 +88,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     zz = 72 - 1 - pidx;
                 end else begin
                     zz = pidx;
-                end
+                end*/
+                zz = pidx;
 
                 if (fonts[0][zz] == 1) begin
                     strip_1 = ledreg[idx];
