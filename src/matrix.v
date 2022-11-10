@@ -11,13 +11,21 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1;
     assign io_out[1] = strip_1;
 
-    reg [0:64-1] fonts [0:1-1];
+    reg [0:64-1] fonts [0:26-1];
     reg [32:0] counter1;
+    reg [32:0] lcounter = 0;
     reg [7:0] idx = 0;
     reg [7:0] pidx = 0;
     reg [7:0] zz = 0;
     reg [0:32-1] ledreg = 32'hf00f0000;
     reg [0:32-1] ledreg2 = 32'hf0000000;
+
+    wire [7:0] data [0:4];
+    assign data[0]  = "h";
+    assign data[1]  = "e";
+    assign data[2]  = "l";
+    assign data[3]  = "l";
+    assign data[4]  = "o";
 
     initial begin
         counter1 = 0;
@@ -25,31 +33,31 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
         clock_1 = 0;
 
         fonts[0] = 64'h00_00_78_0c_7c_cc_76_00;
-        /*fonts[1] = 64'h07_06_06_3E_66_66_3B_00;
-        fonts[2] = 64'h00_00_1E_33_03_33_1E_00;
-        fonts[3] = 64'h38_30_30_3e_33_33_6E_00;
-        fonts[4] = 64'h00_00_1E_33_3f_03_1E_00;
-        fonts[5] = 64'h1C_36_06_0f_06_06_0F_00;
-        fonts[6] = 64'h00_00_6E_33_33_3E_30_1F;
-        fonts[7] = 64'h07_06_36_6E_66_66_67_00;
-        fonts[8] = 64'h0C_00_0E_0C_0C_0C_1E_00;
-        fonts[9] = 64'h30_00_30_30_30_33_33_1E;
-        fonts[10] = 64'h07_06_66_36_1E_36_67_00;
-        fonts[11] = 64'h0E_0C_0C_0C_0C_0C_1E_00;
-        fonts[12] = 64'h00_00_33_7F_7F_6B_63_00;
-        fonts[13] = 64'h00_00_1F_33_33_33_33_00;
-        fonts[14] = 64'h00_00_1E_33_33_33_1E_00;
-        fonts[15] = 64'h00_00_3B_66_66_3E_06_0F;
-        fonts[16] = 64'h00_00_6E_33_33_3E_30_78;
-        fonts[17] = 64'h00_00_3B_6E_66_06_0F_00;
-        fonts[18] = 64'h00_00_3E_03_1E_30_1F_00;
-        fonts[19] = 64'h08_0C_3E_0C_0C_2C_18_00;
-        fonts[20] = 64'h00_00_33_33_33_33_6E_00;
-        fonts[21] = 64'h00_00_33_33_33_1E_0C_00;
-        fonts[22] = 64'h00_00_63_6B_7F_7F_36_00;
-        fonts[23] = 64'h00_00_63_36_1C_36_63_00;
-        fonts[24] = 64'h00_00_33_33_33_3E_30_1F;
-        fonts[25] = 64'h00_00_fc_98_30_64_fc_00;*/
+        fonts[1] = 64'he0_60_60_7c_66_66_dc_00;
+        fonts[2] = 64'h00_00_78_cc_c0_cc_78_00;
+        fonts[3] = 64'h1c_0c_0c_7c_cc_cc_76_00;
+        fonts[4] = 64'h00_00_78_cc_fc_c0_78_00;
+        fonts[5] = 64'h38_6c_60_f0_60_60_f0_00;
+        fonts[6] = 64'h00_00_76_cc_cc_7c_0c_f8;
+        fonts[7] = 64'he0_60_6c_76_66_66_e6_00;
+        fonts[8] = 64'h30_00_70_30_30_30_78_00;
+        fonts[9] = 64'h0c_00_0c_0c_0c_cc_cc_78;
+        fonts[10] = 64'he0_60_66_6c_78_6c_e6_00;
+        fonts[11] = 64'h70_30_30_30_30_30_78_00;
+        fonts[12] = 64'h00_00_cc_fe_fe_d6_c6_00;
+        fonts[13] = 64'h00_00_f8_cc_cc_cc_cc_00;
+        fonts[14] = 64'h00_00_78_cc_cc_cc_78_00;
+        fonts[15] = 64'h00_00_dc_66_66_7c_60_f0;
+        fonts[16] = 64'h00_00_76_cc_cc_7c_0c_1e;
+        fonts[17] = 64'h00_00_dc_76_66_60_f0_00;
+        fonts[18] = 64'h00_00_7c_c0_78_0c_f8_00;
+        fonts[19] = 64'h10_30_7c_30_30_34_18_00;
+        fonts[20] = 64'h00_00_cc_cc_cc_cc_76_00;
+        fonts[21] = 64'h00_00_cc_cc_cc_78_30_00;
+        fonts[22] = 64'h00_00_c6_d6_fe_fe_6c_00;
+        fonts[23] = 64'h00_00_c6_6c_38_6c_c6_00;
+        fonts[24] = 64'h00_00_cc_cc_cc_7c_0c_f8;
+        fonts[25] = 64'h00_00_fc_98_30_64_fc_00;
     end 
 
 `ifdef FPGA
@@ -89,7 +97,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     zz = pidx;
                 end
 
-                if (fonts[0][zz] == 1) begin
+                if (fonts[data[lcounter] - 97][zz] == 1) begin
                     strip_1 = ledreg[idx];
                 end else begin
                     strip_1 = ledreg2[idx];
@@ -113,7 +121,13 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 strip_1 = 0;
                 pidx = 0;
                 idx = 0;
+                lcounter = lcounter + 1;
+
+                if (lcounter == 6) begin
+                    lcounter = 0;
+                end
             end
+
             counter1 = counter1 + 1;
         end
     end
