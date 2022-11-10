@@ -8,5 +8,5 @@ async def test_matrix(dut):
     clock = Clock(dut.clk, 166, units="us")
     cocotb.fork(clock.start())
     
-    await ClockCycles(dut.clk, 6000)
+    await ClockCycles(dut.clk, 6000 * 3)
 

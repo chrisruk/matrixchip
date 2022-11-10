@@ -16,26 +16,30 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1;
     assign io_out[1] = strip_1;
 
-    reg [64-1:0] fonts [0:26-1]; 
-
-    reg [1:0] mem [0:64-1]; 
-
+    reg [0:64-1] fonts [0:27-1];
     integer counter = 0;
     reg [0:0] clk2 = 0;
 
     // external clock is 6kHz, so need 10 bit counter
     reg [32:0] counter1;
-    integer j;
+    integer j = 0;
+    integer idx = 0;
+    integer pidx = 0;
+    integer zz = 0;
+
+    integer flag = 0;
+    integer evrow = 0;
+
+    reg [0:32-1] ledreg = 32'hf00f0000;
+    reg [0:32-1] ledreg2 = 32'hf0000000;
 
     initial begin
         counter1 = 0;
         strip_1 = 0;
         clock_1 = 0;
         pix = 0;
-        for(j = 0; j < 64; j = j + 1) 
-            mem[j] = 1'b0;
 
-        fonts[0] = 64'h00_00_1E_30_3E_33_6E_00;
+        fonts[0] = 64'h00_00_78_0c_7c_cc_76_00;
         fonts[1] = 64'h07_06_06_3E_66_66_3B_00;
         fonts[2] = 64'h00_00_1E_33_03_33_1E_00;
         fonts[3] = 64'h38_30_30_3e_33_33_6E_00;
@@ -60,7 +64,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
         fonts[22] = 64'h00_00_63_6B_7F_7F_36_00;
         fonts[23] = 64'h00_00_63_36_1C_36_63_00;
         fonts[24] = 64'h00_00_33_33_33_3E_30_1F;
-        fonts[25] = 64'h00_00_3F_19_0C_26_3F_00;
+        fonts[25] = 64'h00_00_fc_98_30_64_fc_00;
     end 
 
 `ifdef FPGA
@@ -79,23 +83,52 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 `endif
 
         clock_1 = ~clock_1 ;
+
         if (clock_1 == 1) begin 
             if (counter1 < 32) begin
                 strip_1 = 0;
-            end else if (counter1 < 32 + (32 * 64)) begin
-                strip_1 = 1;
-            end else if (counter1 < 32 + (32 * 64) + 32 + 32) begin
+            end else if (counter1 < 32 + (32 * (8*8))) begin
+
+                if((pidx / 8) == 0) begin
+                    zz = 8 - 1 - pidx;
+                end else if((pidx / 8) == 2) begin
+                    zz = 40 - 1 -  pidx;
+                end else if((pidx / 8) == 4) begin
+                    zz = 56 - 1 - pidx;
+                end else if((pidx / 8) == 6) begin
+                    zz = 72 - 1 - pidx;
+                end else begin
+                    zz = pidx;
+                end
+
+                if (fonts[0][zz] == 1) begin
+                    strip_1 = ledreg[idx];
+                end else begin
+                    strip_1 = ledreg2[idx];
+                end
+
+                idx = idx + 1;
+
+                if (idx == 32) begin
+                    idx = 0;
+                    pidx = pidx + 1;
+                end
+
+                if (pidx == 64) begin
+                    pidx = 0;
+                end
+
+            end else if (counter1 < 32 + (32 * (8*8)) + 32 + 32) begin
                 strip_1 = 0;
             end else begin
                 counter1 = 0;
                 strip_1 = 0;
+                pidx = 0;
+                idx = 0;
+                evrow = 0;
             end
             counter1 = counter1 + 1;
         end
-
-
-        
-        
     end
 endmodule
 
