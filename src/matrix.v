@@ -11,7 +11,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1;
     assign io_out[1] = strip_1;
 
-    reg [0:64-1] fonts [0:5-1];
+    reg [0:64-1] fonts [0:4-1];
     reg [32:0] counter1;
     reg [32:0] lcounter = 0;
     reg [7:0] idx = 0;
@@ -37,8 +37,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
         fonts[0] = 64'he0_60_6c_76_66_66_e6_00;  // h
         fonts[1] = 64'h00_00_78_cc_fc_c0_78_00;  // e
         fonts[2] = 64'h70_30_30_30_30_30_78_00;  // l
-        fonts[3] = 64'h70_30_30_30_30_30_78_00;  // l
-        fonts[4] = 64'h00_00_78_cc_cc_cc_78_00;  // o
+        fonts[3] = 64'h00_00_78_cc_cc_cc_78_00;  // o
 
         /*fonts[0] = 64'h00_00_78_0c_7c_cc_76_00; // a
         fonts[1] = 64'he0_60_60_7c_66_66_dc_00;   // b
@@ -132,7 +131,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 idx = 0;
                 lcounter = lcounter + 1;
 
-                if (lcounter == 6) begin
+                if (lcounter == 5) begin
                     lcounter = 0;
                 end
             end
