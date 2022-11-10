@@ -12,8 +12,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[1] = strip_1;
 
     reg [0:64-1] fonts [0:4-1];
-    reg [32:0] counter1;
-    reg [32:0] lcounter = 0;
+    reg [12:0] counter1;
+    reg [4:0] lcounter = 0;
     reg [7:0] idx = 0;
     reg [7:0] pidx = 0;
     reg [7:0] zz = 0;
