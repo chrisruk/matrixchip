@@ -16,7 +16,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1;
     assign io_out[1] = strip_1;
 
-    reg [0:64-1] fonts [0:27-1];
+    reg [0:64-1] fonts [0:1-1];
     integer counter = 0;
     reg [0:0] clk2 = 0;
 
@@ -40,7 +40,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
         pix = 0;
 
         fonts[0] = 64'h00_00_78_0c_7c_cc_76_00;
-        fonts[1] = 64'h07_06_06_3E_66_66_3B_00;
+        /*fonts[1] = 64'h07_06_06_3E_66_66_3B_00;
         fonts[2] = 64'h00_00_1E_33_03_33_1E_00;
         fonts[3] = 64'h38_30_30_3e_33_33_6E_00;
         fonts[4] = 64'h00_00_1E_33_3f_03_1E_00;
@@ -64,7 +64,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
         fonts[22] = 64'h00_00_63_6B_7F_7F_36_00;
         fonts[23] = 64'h00_00_63_36_1C_36_63_00;
         fonts[24] = 64'h00_00_33_33_33_3E_30_1F;
-        fonts[25] = 64'h00_00_fc_98_30_64_fc_00;
+        fonts[25] = 64'h00_00_fc_98_30_64_fc_00;*/
     end 
 
 `ifdef FPGA
