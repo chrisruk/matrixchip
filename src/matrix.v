@@ -4,12 +4,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
   input [7:0] io_in,
   output [7:0] io_out
 );
-    integer bitidx = 0;
-    integer pix = 0;
     integer size = 64;     //    -- Number of LEDs
     wire clk = io_in[0];
-    //wire reset = io_in[1];
-
     reg [0:0] clock_1 = 0;
     reg [0:0] strip_1 = 0;
     
@@ -19,8 +15,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [0:64-1] fonts [0:1-1];
     integer counter = 0;
     reg [0:0] clk2 = 0;
-
-    // external clock is 6kHz, so need 10 bit counter
     reg [32:0] counter1;
     integer j = 0;
     integer idx = 0;
@@ -28,7 +22,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     integer zz = 0;
 
     integer flag = 0;
-    integer evrow = 0;
 
     reg [0:32-1] ledreg = 32'hf00f0000;
     reg [0:32-1] ledreg2 = 32'hf0000000;
@@ -37,7 +30,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
         counter1 = 0;
         strip_1 = 0;
         clock_1 = 0;
-        pix = 0;
 
         fonts[0] = 64'h00_00_78_0c_7c_cc_76_00;
         /*fonts[1] = 64'h07_06_06_3E_66_66_3B_00;
@@ -125,7 +117,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 strip_1 = 0;
                 pidx = 0;
                 idx = 0;
-                evrow = 0;
             end
             counter1 = counter1 + 1;
         end
