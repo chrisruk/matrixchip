@@ -4,7 +4,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
   input [7:0] io_in,
   output [7:0] io_out
 );
-    integer size = 64;     // Number of LEDs
     wire clk = io_in[0];
     reg [0:0] clock_1 = 0;
     reg [0:0] strip_1 = 0;
@@ -14,9 +13,9 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
     reg [0:64-1] fonts [0:1-1];
     reg [32:0] counter1;
-    integer idx = 0;
-    integer pidx = 0;
-    integer zz = 0;
+    reg [7:0] idx = 0;
+    reg [7:0] pidx = 0;
+    reg [7:0] zz = 0;
     reg [0:32-1] ledreg = 32'hf00f0000;
     reg [0:32-1] ledreg2 = 32'hf0000000;
 
@@ -78,7 +77,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 strip_1 = 0;
             end else if (counter1 < 32 + (32 * (8*8))) begin
 
-                /*if((pidx / 8) == 0) begin
+                if((pidx / 8) == 0) begin
                     zz = 8 - 1 - pidx;
                 end else if((pidx / 8) == 2) begin
                     zz = 40 - 1 -  pidx;
@@ -88,8 +87,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     zz = 72 - 1 - pidx;
                 end else begin
                     zz = pidx;
-                end*/
-                zz = pidx;
+                end
 
                 if (fonts[0][zz] == 1) begin
                     strip_1 = ledreg[idx];
