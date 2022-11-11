@@ -97,9 +97,9 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 end else if((pidx / 8) == 2) begin
                     zz = 40 - 1 -  pidx;
                 end else if((pidx / 8) == 4) begin
-                    zz = 56 - 1 - pidx;
-                end else if((pidx / 8) == 6) begin
                     zz = 72 - 1 - pidx;
+                end else if((pidx / 8) == 6) begin
+                    zz = 104 - 1 - pidx;
                 end else begin
                     zz = pidx;
                 end
