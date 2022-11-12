@@ -14,7 +14,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:64-1] fonts [0:6-1]; // Font array
+    reg [0:64-1] fonts [0:4-1]; // Font array
     reg [12:0] counter1;        // Count where we are in bit pattern
     reg [8:0] shift;            // Amount to left shift letter
     reg [4:0] letteridx;        // Index of letter
@@ -23,6 +23,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [7:0] idx;              // Bit index within colour register
     reg [7:0] pidx;             // Bit index within letter, we apply processing on top of this
                                 // value to create the bitidx value
+
     reg [7:0] bitidx;           // Index of bit we are within of letter
     reg [0:32-1] ledreg;        // Colour 1
     reg [0:32-1] ledreg2;       // Colour 2
@@ -64,9 +65,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             fonts[0] = 64'he0_60_6c_76_66_66_e6_00;  // h
             fonts[1] = 64'h00_00_78_cc_fc_c0_78_00;  // e
             fonts[2] = 64'h70_30_30_30_30_30_78_00;  // l
-            fonts[3] = 64'h70_30_30_30_30_30_78_00;  // l
-            fonts[4] = 64'h00_00_78_cc_cc_cc_78_00;  // o
-            fonts[5] = 64'h0;
+            fonts[3] = 64'h00_00_78_cc_cc_cc_78_00;  // o
 
         end else begin
             clock_1 = ~clock_1 ;
@@ -115,7 +114,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
                     if (shift == 7) begin
                         letteridx = letteridx + 1;
-                        if (letteridx == 6) begin
+                        if (letteridx == 4) begin
                             letteridx = 0;
                         end
                         shift = 0;
