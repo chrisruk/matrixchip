@@ -14,7 +14,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:64-1] fonts [0:4-1]; // Font array
+    reg [0:56-1] fonts [0:4-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
     reg [4:0] letteridx;        // Index of letter
@@ -60,10 +60,10 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             ledreg2 = 32'hf0000000;
 
             // Array of 8x8 font letters
-            fonts[0] = 64'he0_60_6c_76_66_66_e6_00;  // h
-            fonts[1] = 64'h00_00_78_cc_fc_c0_78_00;  // e
-            fonts[2] = 64'h70_30_30_30_30_30_78_00;  // l
-            fonts[3] = 64'h00_00_78_cc_cc_cc_78_00;  // o
+            fonts[0] = 64'he0_60_6c_76_66_66_e6;  // h
+            fonts[1] = 64'h00_00_78_cc_fc_c0_78;  // e
+            fonts[2] = 64'h70_30_30_30_30_30_78;  // l
+            fonts[3] = 64'h00_00_78_cc_cc_cc_78;  // o
 
         end else begin
             clock_1 = ~clock_1 ;
@@ -71,9 +71,9 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 if (counter1 < 32) begin
                     // Need zeros at start of pattern
                     strip_1 = 0;
-                    display = {fonts[letteridx][56:63] << shift, fonts[letteridx][48:55] << shift, fonts[letteridx][40:47] << shift, fonts[letteridx][32:39] << shift,
+                    display = {8'b0, fonts[letteridx][48:55] << shift, fonts[letteridx][40:47] << shift, fonts[letteridx][32:39] << shift,
                                  fonts[letteridx][24:31] << shift, fonts[letteridx][16:23] << shift, fonts[letteridx][8:15] << shift, fonts[letteridx][0:7] << shift};
-                    display = display | {fonts[letteridx+1][56:63] >> 8 - shift, fonts[letteridx+1][48:55] >> 8 - shift, fonts[letteridx+1][40:47] >> 8 - shift, fonts[letteridx+1][32:39] >> 8 - shift,
+                    display = display | {8'b0, fonts[letteridx+1][48:55] >> 8 - shift, fonts[letteridx+1][40:47] >> 8 - shift, fonts[letteridx+1][32:39] >> 8 - shift,
                                  fonts[letteridx+1][24:31] >> 8 - shift, fonts[letteridx+1][16:23] >> 8 - shift, fonts[letteridx+1][8:15] >> 8 - shift, fonts[letteridx+1][0:7] >> 8 - shift};
                 end else if (counter1 < 32 + (32 * (8*8))) begin
                     rowno = pidx / 8;
