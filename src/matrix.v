@@ -14,7 +14,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:48-1] fonts [0:4-1]; // Font array
+    reg [0:48-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
     reg [4:0] letteridx;        // Index of letter
@@ -53,24 +53,23 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             letteridx = 0;
             counter1 = 0;
             rowno = 0;
-
             idx = 0;
             pidx = 0;
-
             strip_1 = 0;
             clock_1 = 0;
-
             resetflag = 0;
-
             bitidx = 0;
             ledreg1 = 32'hf00f0000;
             ledreg2 = 32'hf0000000;
 
             // Array of 8x8 font letters
-            fonts[0] = 48'h60_6c_76_66_66_e6;  // h
+            /*fonts[0] = 48'h60_6c_76_66_66_e6;  // h
             fonts[1] = 48'h00_78_cc_fc_c0_78;  // e
             fonts[2] = 48'h30_30_30_30_30_78;  // l
-            fonts[3] = 48'h00_78_cc_cc_cc_78;  // o
+            fonts[3] = 48'h00_78_cc_cc_cc_78;  // o*/
+
+            fonts[0] = 48'h30_30_30_30_30_78;  // l
+            fonts[1] = 48'h00_78_cc_cc_cc_78;  // o
 
         end else begin
             clock_1 = ~clock_1 ;
@@ -86,20 +85,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     rowno = pidx / 8;
                     // flip bit order if even row, as matrix of LEDs
                     // is in a 'snake' like pattern
-                    /*if(rowno % 2 == 0) begin
+                    if(rowno % 2 == 0) begin
                         bitidx = ((rowno * 16) + 8) - 1 - pidx;
-                    end else begin
-                        bitidx = pidx;
-                    end*/
-
-                    if((pidx / 8) == 0) begin
-                        bitidx = 8 - 1 - pidx;
-                    end else if((pidx / 8) == 2) begin
-                        bitidx = 40 - 1 -  pidx;
-                    end else if((pidx / 8) == 4) begin
-                        bitidx = 72 - 1 - pidx;
-                    end else if((pidx / 8) == 6) begin
-                        bitidx = 104 - 1 - pidx;
                     end else begin
                         bitidx = pidx;
                     end
