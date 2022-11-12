@@ -25,7 +25,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                                 // value to create the bitidx value
 
     reg [5:0] bitidx;           // Index of bit we are within of letter
-    reg [0:32-1] ledreg;        // Colour 1
     reg [0:32-1] ledreg2;       // Colour 2
     reg [0:64-1] display;       // Display buffer
 
@@ -58,7 +57,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             clock_1 = 0;
             resetflag = 0;
             bitidx = 0;
-            ledreg = 32'hf00f0000;
             ledreg2 = 32'hf0000000;
 
             // Array of 8x8 font letters
@@ -89,7 +87,11 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
                     // Extract bit from display buffer
                     if (display[bitidx] == 1) begin
-                        strip_1 = ledreg[idx];
+                        if (idx >= 17 && idx <= 19) begin
+                            strip_1 = 1;
+                        end else begin
+                            strip_1 = ledreg2[idx];
+                        end
                     end else begin
                         strip_1 = ledreg2[idx];
                     end
