@@ -4,26 +4,29 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
   input [7:0] io_in,
   output [7:0] io_out
 );
-    wire clk = io_in[0];
-    wire reset = io_in[1];
+    wire clk = io_in[0];        // Input clock line
+    wire reset = io_in[1];      // Input reset line
 
-    reg [0:0] resetflag = 1;
-    reg [0:0] clock_1 = 0;
-    reg [0:0] strip_1 = 0;
+    reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
+    reg [0:0] clock_1;
+    reg [0:0] strip_1;
     
-    assign io_out[0] = clock_1;
-    assign io_out[1] = strip_1;
+    assign io_out[0] = clock_1; // Clock output for LED matrix
+    assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:64-1] fonts [0:4-1];
-    reg [12:0] counter1;
-    reg [4:0] lcounter;
-    reg [7:0] idx;
-    reg [7:0] pidx;
-    reg [7:0] zz;
-    reg [0:32-1] ledreg;
-    reg [0:32-1] ledreg2;
+    reg [0:64-1] fonts [0:4-1]; // Font array
+    reg [12:0] counter1;        // Count where we are in bit pattern
+    reg [4:0] lcounter;         // Index of letter
+    reg [7:0] rowno;            // Row number in 8x8 matrix
+    reg [7:0] idx;              // Bit index within colour register
+    reg [7:0] pidx;             // Bit index within letter, we apply processing on top of this
+                                // value to create the bitidx value
+    reg [7:0] bitidx;           // Index of bit we are within of letter
+    reg [0:32-1] ledreg;        // Colour 1
+    reg [0:32-1] ledreg2;       // Colour 2
 
 `ifdef FPGA
+    // Generate 6kHz clock from input 12MHz clock
     reg [0:0] clk2 = 0;
     integer counter = 0;
 
@@ -41,6 +44,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     always @(posedge clk) begin
 `endif
         if (reset || resetflag) begin
+            // Setup variables
             lcounter = 0;
             counter1 = 0;
             idx = 0;
@@ -48,9 +52,11 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             strip_1 = 0;
             clock_1 = 0;
             resetflag = 0;
-            zz = 0;
+            bitidx = 0;
             ledreg = 32'hf00f0000;
             ledreg2 = 32'hf0000000;
+
+            // Array of 8x8 font letters
             fonts[0] = 64'he0_60_6c_76_66_66_e6_00;  // h
             fonts[1] = 64'h00_00_78_cc_fc_c0_78_00;  // e
             fonts[2] = 64'h70_30_30_30_30_30_78_00;  // l
@@ -59,22 +65,20 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             clock_1 = ~clock_1 ;
             if (clock_1 == 1) begin
                 if (counter1 < 32) begin
+                    // Need zeros at start of pattern
                     strip_1 = 0;
                 end else if (counter1 < 32 + (32 * (8*8))) begin
-
-                    if((pidx / 8) == 0) begin
-                        zz = 8 - 1 - pidx;
-                    end else if((pidx / 8) == 2) begin
-                        zz = 40 - 1 -  pidx;
-                    end else if((pidx / 8) == 4) begin
-                        zz = 72 - 1 - pidx;
-                    end else if((pidx / 8) == 6) begin
-                        zz = 104 - 1 - pidx;
+                    rowno = pidx / 8;
+                    // flip bit order if even row, as matrix of LEDs
+                    // is in a 'snake' like pattern
+                    if(rowno % 2 == 0) begin
+                        bitidx = ((rowno * 16) + 8) - 1 - pidx;
                     end else begin
-                        zz = pidx;
+                        bitidx = pidx;
                     end
 
-                    if (fonts[lcounter][zz] == 1) begin
+                    // Extract bit from letter array
+                    if (fonts[lcounter][bitidx] == 1) begin
                         strip_1 = ledreg[idx];
                     end else begin
                         strip_1 = ledreg2[idx];
@@ -89,6 +93,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                         pidx = 0;
                     end
                 end else if (counter1 < 32 + (32 * (8*8)) + 32 + 32) begin
+                    // Need zeros at end of pattern
                     strip_1 = 0;
                 end else begin
                     counter1 = 0;
@@ -96,7 +101,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     pidx = 0;
                     idx = 0;
                     lcounter = lcounter + 1;
-
+                    // Need to wrap back to first letter
                     if (lcounter == 5) begin
                         lcounter = 0;
                     end
