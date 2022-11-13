@@ -55,3 +55,5 @@ set ::env(RT_MAX_LAYER) {met4}
 # connect to first digital rails
 set ::env(VDD_NETS) [list {vccd1}]
 set ::env(GND_NETS) [list {vssd1}]
+
+set ::env(GLB_RT_ALLOW_CONGESTION) "1"
