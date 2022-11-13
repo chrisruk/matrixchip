@@ -58,17 +58,14 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             // Setup variables
             shift <= 0;
             counter1 <= 0;
-            rowno <= 0;
             idx <= 0;
             pidx <= 0;
             strip_1 <= 0;
             clock_1 <= 0;
-            bitidx <= 0;
             ledreg1 <= 32'hf0000f00;                 // Number colour
             ledreg2 <= 32'hf0070000;                 // Background colour
             fonts[0] <= 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
             fonts[1] <= 64'h30_70_30_30_30_30_fc_00; // 1
-            //digit1 <= 0;
             digit1_cache <= 0;
             digit2_cache <= digit1;
             first = 1;
