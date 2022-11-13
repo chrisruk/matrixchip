@@ -13,7 +13,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
     reg [0:0] a;                // First char
     reg [0:0] b;                // Second char
-    reg [32-1:0] lfsr;          // LFSR
+    reg [0:3-1] lfsr;          // LFSR
     
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
@@ -67,16 +67,11 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             ledreg2 = 32'hf0000000;
             fonts[0] = 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
             fonts[1] = 64'h30_70_30_30_30_30_fc_00; // 1
-            lfsr = 'hffffffff;
-
-            /*lfsr = lfsr ^ (lfsr << 13);
-            lfsr = lfsr ^ (lfsr >> 17);
-            lfsr = lfsr ^ (lfsr << 5);*/
+            lfsr = 'b100;
+            lfsr = (lfsr[0] ^ lfsr[2]) | (lfsr << 1);
             a = lfsr[0];
 
-            /*lfsr = lfsr ^ (lfsr << 13);
-            lfsr = lfsr ^ (lfsr >> 17);
-            lfsr = lfsr ^ (lfsr << 5);*/
+            lfsr = (lfsr[0] ^ lfsr[2]) | (lfsr << 1);
             b = lfsr[0];
         end else begin
             clock_1 = ~clock_1 ;
@@ -129,9 +124,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
                     if (shift == 7) begin
                         a = b;
-                        /*lfsr = lfsr ^ (lfsr << 13);
-                        lfsr = lfsr ^ (lfsr >> 17);
-                        lfsr = lfsr ^ (lfsr << 5);*/
+                        lfsr = (lfsr[0] ^ lfsr[2]) | (lfsr << 1);
                         b = lfsr[0];
                         shift = 0;
                     end else begin
