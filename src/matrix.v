@@ -12,7 +12,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     /*reg [0:0] digit1 = 0;
     reg [0:0] digit2 = 1;*/
 
-    reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
     reg [0:0] clock_1;
     reg [0:0] strip_1;
 
@@ -41,6 +40,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     // Generate 6kHz clock from input 12MHz clock
     reg [0:0] clk2 = 0;
     integer counter = 0;
+    reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
 
     always @(posedge clk) begin
         if (counter == 2000) begin
@@ -52,10 +52,12 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     end
 
     always @(posedge clk2) begin
+        if (reset || resetflag) begin
+            resetflag <= 0;
 `else
     always @(posedge clk) begin
+        if (reset) begin
 `endif
-        if (reset || resetflag) begin
             // Setup variables
             shift <= 0;
             letteridx <= 0;
@@ -65,7 +67,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             pidx <= 0;
             strip_1 <= 0;
             clock_1 <= 0;
-            resetflag <= 0;
             bitidx <= 0;
             ledreg1 <= 32'hf0000f00;                 // Number colour
             ledreg2 <= 32'hf0070000;                 // Background colour
