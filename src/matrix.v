@@ -15,14 +15,12 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
     reg [0:0] clock_1;
     reg [0:0] strip_1;
-    reg [0:0] blank;
 
     reg [0:0] digit1_cache;
     reg [0:0] digit2_cache;
 
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
-    assign io_out[2] = blank;   // Time when you can alter digit
 
     reg [0:64-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
@@ -59,7 +57,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 `endif
         if (reset || resetflag) begin
             // Setup variables
-            blank = 0;
             shift = 0;
             letteridx = 0;
             counter1 = 0;
