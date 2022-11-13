@@ -6,8 +6,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 );
     wire clk = io_in[0];        // Input clock line
     wire reset = io_in[1];      // Input reset line
-    wire digit1 = io_in[2];     // First char
-    wire digit2 = io_in[3];     // Second char
+    wire digit1_cache = io_in[2];     // First char
+    wire digit2_cache = io_in[3];     // Second char
 
     /*reg [0:0] digit1 = 0;
     reg [0:0] digit2 = 1;*/
@@ -15,8 +15,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [0:0] clock_1;
     reg [0:0] strip_1;
 
-    reg [0:0] digit1_cache;
-    reg [0:0] digit2_cache;
+    //reg [0:0] digit1_cache;
+    //reg [0:0] digit2_cache;
 
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
@@ -72,8 +72,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             ledreg2 <= 32'hf0070000;                 // Background colour
             fonts[0] <= 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
             fonts[1] <= 64'h30_70_30_30_30_30_fc_00; // 1
-            digit1_cache <= digit1;
-            digit2_cache <= digit2;
+            //digit1_cache <= digit1;
+            //digit2_cache <= digit2;
         end else begin
             clock_1 = ~clock_1 ;
             if (clock_1 == 1) begin
@@ -123,8 +123,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     idx = 0;
 
                     if (shift == 7) begin
-                        digit1_cache = digit2_cache;
-                        digit2_cache = digit1;
+                        /*digit1_cache = digit2_cache;
+                        digit2_cache = digit1;*/
                         shift = 0;
                     end else begin
                         // Need to wrap back to first letter
