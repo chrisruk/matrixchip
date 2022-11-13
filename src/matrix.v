@@ -24,7 +24,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
 
-    reg [5-1:0] rcount;          // Row number in 8x8 matrix
+    reg [4-1:0] rcount;          // Row number in 8x8 matrix
     reg [3-1:0] rowno;          // Row number in 8x8 matrix
     reg [6-1:0] idx;              // Bit index within colour register
     reg [6-1:0] pidx;           // Bit index within letter, we apply processing on top of this
