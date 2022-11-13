@@ -10,11 +10,15 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
     reg [0:0] clock_1;
     reg [0:0] strip_1;
+
+    reg [0:0] a;                // First char
+    reg [0:0] b;                // Second char
+    reg [32-1:0] lfsr;          // LFSR
     
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:48-1] fonts [0:2-1]; // Font array
+    reg [0:64-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
     reg [4:0] letteridx;        // Index of letter
@@ -61,26 +65,33 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             bitidx = 0;
             ledreg1 = 32'hf00f0000;
             ledreg2 = 32'hf0000000;
+            fonts[0] = 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
+            fonts[1] = 64'h30_70_30_30_30_30_fc_00; // 1
+            lfsr = 'hffffffff;
 
-            // Array of 8x8 font letters
-            /*fonts[0] = 48'h60_6c_76_66_66_e6;  // h
-            fonts[1] = 48'h00_78_cc_fc_c0_78;  // e
-            fonts[2] = 48'h30_30_30_30_30_78;  // l
-            fonts[3] = 48'h00_78_cc_cc_cc_78;  // o*/
+            lfsr = lfsr ^ (lfsr << 13);
+            lfsr = lfsr ^ (lfsr >> 17);
+            lfsr = lfsr ^ (lfsr << 5);
+            a = lfsr[0];
 
-            fonts[0] = 48'h30_30_30_30_30_78;  // l
-            fonts[1] = 48'h00_78_cc_cc_cc_78;  // o
-
+            lfsr = lfsr ^ (lfsr << 13);
+            lfsr = lfsr ^ (lfsr >> 17);
+            lfsr = lfsr ^ (lfsr << 5);
+            b = lfsr[0];
         end else begin
             clock_1 = ~clock_1 ;
             if (clock_1 == 1) begin
                 if (counter1 < 32) begin
-                    // Need zeros at start of pattern
                     strip_1 = 0;
-                    display = {8'b0, fonts[letteridx][40:47] << shift, fonts[letteridx][32:39] << shift,
-                                 fonts[letteridx][24:31] << shift, fonts[letteridx][16:23] << shift, fonts[letteridx][8:15] << shift, fonts[letteridx][0:7] << shift, 8'b0};
-                    display = display | {8'b0, fonts[letteridx+1][40:47] >> 8 - shift, fonts[letteridx+1][32:39] >> 8 - shift,
-                                 fonts[letteridx+1][24:31] >> 8 - shift, fonts[letteridx+1][16:23] >> 8 - shift, fonts[letteridx+1][8:15] >> 8 - shift, fonts[letteridx+1][0:7] >> 8 - shift, 8'b0};
+                    display = {fonts[a][56:63] << shift, fonts[a][48:55] << shift,
+                               fonts[a][40:47] << shift, fonts[a][32:39] << shift,
+                               fonts[a][24:31] << shift, fonts[a][16:23] << shift,
+                               fonts[a][8:15]  << shift, fonts[a][0:7]   << shift};
+
+                    display = display | {fonts[b][56:63] >> 8 - shift, fonts[b][48:55] >> 8 - shift,
+                                         fonts[b][40:47] >> 8 - shift, fonts[b][32:39] >> 8 - shift,
+                                         fonts[b][24:31] >> 8 - shift, fonts[b][16:23] >> 8 - shift,
+                                         fonts[b][8:15]  >> 8 - shift, fonts[b][0:7]   >> 8 - shift};
                 end else if (counter1 < 32 + (32 * (8*8))) begin
                     rowno = pidx / 8;
                     // flip bit order if even row, as matrix of LEDs
@@ -117,10 +128,11 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     idx = 0;
 
                     if (shift == 7) begin
-                        letteridx = letteridx + 1;
-                        if (letteridx == 4) begin
-                            letteridx = 0;
-                        end
+                        a = b;
+                        lfsr = lfsr ^ (lfsr << 13);
+                        lfsr = lfsr ^ (lfsr >> 17);
+                        lfsr = lfsr ^ (lfsr << 5);
+                        b = lfsr[0];
                         shift = 0;
                     end else begin
                         // Need to wrap back to first letter
