@@ -82,8 +82,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                         display = 0;
                     end 
                     display = display | {8'b0, 8'b0, 8'b0, 8'b0, 8'b0,
-                               fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
-                               fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
+                                        fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
+                                        fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
                 end else if (counter1 < 32 + (32 * (8*8))) begin
                     rowno = pidx / 8;
                     // flip bit order if even row, as matrix of LEDs
