@@ -9,8 +9,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     wire digit1 = io_in[2];     // First char
     //reg [0:0] digit1 = 0;
 
-    reg [1:0] digit1_cache;     // Cache of digit on input line
-    reg [1:0] digit2_cache;     // Cache of digit on input line
+    reg [0:0] digit1_cache;     // Cache of digit on input line
+    reg [0:0] digit2_cache;     // Cache of digit on input line
 
     reg [0:0] clock_1;
     reg [0:0] strip_1;
