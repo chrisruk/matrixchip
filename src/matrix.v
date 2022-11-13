@@ -118,7 +118,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     strip_1 = 0;
                 end else begin
                     counter1 = 0;
-                    strip_1 = 0;
                     pidx = 0;
                     idx = 0;
 
