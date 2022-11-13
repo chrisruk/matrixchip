@@ -11,6 +11,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
     reg [0:0] digit1_cache;     // Cache of digit on input line
     reg [0:0] digit2_cache;     // Cache of digit on input line
+    reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
 
     reg [0:0] clock_1;
     reg [0:0] strip_1;
@@ -23,6 +24,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
 
+    reg [5-1:0] rcount;          // Row number in 8x8 matrix
     reg [3-1:0] rowno;          // Row number in 8x8 matrix
     reg [6-1:0] idx;              // Bit index within colour register
     reg [6-1:0] pidx;           // Bit index within letter, we apply processing on top of this
@@ -37,7 +39,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     // Generate 6kHz clock from input 12MHz clock
     reg [0:0] clk2 = 0;
     integer counter = 0;
-    reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
 
     always @(posedge clk) begin
         if (counter == 2000) begin
@@ -49,12 +50,14 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     end
 
     always @(posedge clk2) begin
-        if (reset || resetflag) begin
-            resetflag <= 0;
+
 `else
     always @(posedge clk) begin
-        if (reset) begin
 `endif
+
+        if (reset || resetflag) begin
+            resetflag <= 0;
+
             // Setup variables
             shift <= 0;
             counter1 <= 0;
@@ -68,7 +71,9 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             fonts[1] <= 64'h30_70_30_30_30_30_fc_00; // 1
             digit1_cache <= 0;
             digit2_cache <= digit1;
-            first = 1;
+            first <= 1;
+            rowno <= 0;
+            rcount <= 0;
         end else begin
             clock_1 = ~clock_1 ;
             if (clock_1 == 1) begin
@@ -87,9 +92,10 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                                fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
                                fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
                 end else if (counter1 < 32 + (32 * (8*8))) begin
-                    rowno = pidx / 8;
                     // flip bit order if even row, as matrix of LEDs
                     // is in a 'snake' like pattern
+                    //rowno = pidx / 8;
+
                     if(rowno % 2 == 0) begin
                         bitidx = ((rowno * 16) + 8) - 1 - pidx;
                     end else begin
@@ -107,11 +113,18 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     if (idx == 32) begin
                         idx = 0;
                         pidx = pidx + 1;
+                        rcount = rcount + 1;
+                        if (rcount == 8) begin
+                            rcount = 0;
+                            rowno = rowno + 1;
+                        end
                     end
                 end else if (counter1 < 32 + (32 * (8*8)) + 32 + 32) begin
                     // Need zeros at end of pattern
                     strip_1 = 0;
                 end else begin
+                    rowno = 0;
+                    rcount = 0;
                     counter1 = 0;
                     pidx = 0;
                     idx = 0;
@@ -125,7 +138,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                         shift = shift + 1;
                     end
                 end
-
                 counter1 = counter1 + 1;
             end
         end
