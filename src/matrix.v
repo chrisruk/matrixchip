@@ -14,7 +14,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
     reg [0:0] clock_1;
     reg [0:0] strip_1;
-
     reg [0:0] first;
 
     assign io_out[0] = clock_1; // Clock output for LED matrix
@@ -23,7 +22,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [0:64-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
-    reg [4:0] letteridx;        // Index of letter
 
     reg [3:0] rowno;            // Row number in 8x8 matrix
     reg [5:0] idx;              // Bit index within colour register
@@ -59,7 +57,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 `endif
             // Setup variables
             shift <= 0;
-            letteridx <= 0;
             counter1 <= 0;
             rowno <= 0;
             idx <= 0;
