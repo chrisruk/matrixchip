@@ -23,12 +23,12 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
 
-    reg [3:0] rowno;            // Row number in 8x8 matrix
-    reg [5:0] idx;              // Bit index within colour register
-    reg [5:0] pidx;             // Bit index within letter, we apply processing on top of this
+    reg [3-1:0] rowno;          // Row number in 8x8 matrix
+    reg [5-1:0] idx;            // Bit index within colour register
+    reg [6-1:0] pidx;           // Bit index within letter, we apply processing on top of this
                                 // value to create the bitidx value
 
-    reg [5:0] bitidx;           // Index of bit we are within of letter
+    reg [6-1:0] bitidx;         // Index of bit we are within of letter
     reg [0:32-1] ledreg1;       // Colour 1
     reg [0:32-1] ledreg2;       // Colour 2
     reg [0:64-1] display;       // Display buffer
