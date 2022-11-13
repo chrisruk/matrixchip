@@ -91,7 +91,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     // flip bit order if even row, as matrix of LEDs
                     // is in a 'snake' like pattern
                     if(rowno % 2 == 0) begin
-                        bitidx = ((rowno * 16) + 8) - 1 - pidx;
+                        bitidx = pidx; //((rowno * 16) + 8) - 1 - pidx;
                     end else begin
                         bitidx = pidx;
                     end
