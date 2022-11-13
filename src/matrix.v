@@ -104,14 +104,9 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     end
 
                     idx = idx + 1;
-
                     if (idx == 32) begin
                         idx = 0;
                         pidx = pidx + 1;
-                    end
-
-                    if (pidx == 64) begin
-                        pidx = 0;
                     end
                 end else if (counter1 < 32 + (32 * (8*8)) + 32 + 32) begin
                     // Need zeros at end of pattern
@@ -120,7 +115,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     counter1 = 0;
                     pidx = 0;
                     idx = 0;
-
                     if (shift == 7) begin
                         digit1_cache = digit2_cache;
                         digit2_cache = digit1;
