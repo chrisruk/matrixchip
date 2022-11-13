@@ -68,10 +68,10 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             fonts[0] = 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
             fonts[1] = 64'h30_70_30_30_30_30_fc_00; // 1
             lfsr = 'b100;
-            lfsr = (lfsr[0] ^ lfsr[2]) | (lfsr << 1);
+            //lfsr = (lfsr[0] ^ lfsr[2]) | (lfsr << 1);
             a = lfsr[0];
 
-            lfsr = (lfsr[0] ^ lfsr[2]) | (lfsr << 1);
+            //lfsr = (lfsr[0] ^ lfsr[2]) | (lfsr << 1);
             b = lfsr[0];
         end else begin
             clock_1 = ~clock_1 ;
