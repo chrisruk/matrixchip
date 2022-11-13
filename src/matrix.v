@@ -7,7 +7,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     wire clk = io_in[0];        // Input clock line
     wire reset = io_in[1];      // Input reset line
     wire digit1_cache = io_in[2];     // First char
-    wire digit2_cache = io_in[3];     // Second char
+    //wire digit2_cache = io_in[3];     // Second char
 
     /*reg [0:0] digit1 = 0;
     reg [0:0] digit2 = 1;*/
@@ -82,11 +82,11 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     display = {fonts[digit1_cache][56:63] << shift, fonts[digit1_cache][48:55] << shift,
                                fonts[digit1_cache][40:47] << shift, fonts[digit1_cache][32:39] << shift,
                                fonts[digit1_cache][24:31] << shift, fonts[digit1_cache][16:23] << shift,
-                               fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift} |
+                               fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift}; /*|
                               {fonts[digit2_cache][56:63] >> 8 - shift, fonts[digit2_cache][48:55] >> 8 - shift,
                                fonts[digit2_cache][40:47] >> 8 - shift, fonts[digit2_cache][32:39] >> 8 - shift,
                                fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
-                               fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
+                               fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};*/
                 end else if (counter1 < 32 + (32 * (8*8))) begin
                     rowno = pidx / 8;
                     // flip bit order if even row, as matrix of LEDs
