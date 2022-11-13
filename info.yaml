@@ -21,15 +21,15 @@ documentation:
   inputs:               # a description of what the inputs do
     - clock
     - reset
-    - Digit1		# First digit to display
-    - Digit2		# Second digit to display
+    - none
+    - none
     - none
     - none
     - none
     - none
   outputs:
-    - LED Clock         # Led Clock Line
-    - LED Data		 # Led Data Line
+    - LED Clock         # a description of what the outputs do
+    - LED Data
     - none
     - none
     - none
