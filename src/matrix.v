@@ -130,7 +130,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
                     if (shift == 7) begin
                         digit1_cache = digit2_cache;
-                        digit2_cache = digit1 + 1;
+                        digit2_cache = digit1;
                         shift = 0;
                         first = 0;
                     end else begin
