@@ -15,13 +15,12 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     reg [0:0] clock_1;
     reg [0:0] strip_1;
 
-    //reg [0:0] digit1_cache;
-    //reg [0:0] digit2_cache;
+    reg [0:0] first;
 
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:64-1] fonts [0:3-1]; // Font array
+    reg [0:64-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
     reg [4:0] letteridx;        // Index of letter
@@ -70,22 +69,26 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             bitidx <= 0;
             ledreg1 <= 32'hf0000f00;                 // Number colour
             ledreg2 <= 32'hf0070000;                 // Background colour
-            fonts[0] <= 64'h0;
-            fonts[1] <= 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
-            fonts[2] <= 64'h30_70_30_30_30_30_fc_00; // 1
+            fonts[0] <= 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
+            fonts[1] <= 64'h30_70_30_30_30_30_fc_00; // 1
             //digit1 <= 0;
             digit1_cache <= 0;
-            digit2_cache <= digit1 + 1;
+            digit2_cache <= digit1;
+            first = 1;
         end else begin
             clock_1 = ~clock_1 ;
             if (clock_1 == 1) begin
                 if (counter1 < 32) begin
                     strip_1 = 0;
-                    display = {fonts[digit1_cache][56:63] << shift, fonts[digit1_cache][48:55] << shift,
-                               fonts[digit1_cache][40:47] << shift, fonts[digit1_cache][32:39] << shift,
-                               fonts[digit1_cache][24:31] << shift, fonts[digit1_cache][16:23] << shift,
-                               fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift} |
-                              {fonts[digit2_cache][56:63] >> 8 - shift, fonts[digit2_cache][48:55] >> 8 - shift,
+                    if(!first) begin
+                        display = {fonts[digit1_cache][56:63] << shift, fonts[digit1_cache][48:55] << shift,
+                                   fonts[digit1_cache][40:47] << shift, fonts[digit1_cache][32:39] << shift,
+                                   fonts[digit1_cache][24:31] << shift, fonts[digit1_cache][16:23] << shift,
+                                   fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift};
+                    end else begin
+                        display = 0;
+                    end 
+                    display = display | {fonts[digit2_cache][56:63] >> 8 - shift, fonts[digit2_cache][48:55] >> 8 - shift,
                                fonts[digit2_cache][40:47] >> 8 - shift, fonts[digit2_cache][32:39] >> 8 - shift,
                                fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
                                fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
@@ -107,6 +110,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     end
 
                     idx = idx + 1;
+
                     if (idx == 32) begin
                         idx = 0;
                         pidx = pidx + 1;
@@ -128,6 +132,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                         digit1_cache = digit2_cache;
                         digit2_cache = digit1 + 1;
                         shift = 0;
+                        first = 0;
                     end else begin
                         // Need to wrap back to first letter
                         shift = shift + 1;
