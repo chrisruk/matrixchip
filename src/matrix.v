@@ -19,7 +19,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:32-1] fonts [0:2-1]; // Font array
+    reg [0:40-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
 
@@ -64,8 +64,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             clock_1 <= 0;
             ledreg1 <= 32'hf0000f00;      // Number colour
             ledreg2 <= 32'hf0070000;      // Background colour
-            fonts[0] <= 32'hde_f6_e6_7c;  // 0
-            fonts[1] <= 32'h30_30_30_fc;  // 1
+            fonts[0] <= 40'hce_de_f6_e6_7c; // 0
+            fonts[1] <= 40'h30_30_30_30_fc; // 1
             digit1_cache <= 0;
             digit2_cache <= digit1;
             first = 1;
@@ -75,15 +75,18 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 if (counter1 < 32) begin
                     strip_1 = 0;
                     if(!first) begin
-                        display = {8'b0, 8'b0, 8'b0, 8'b0, 8'b0,
+                        display = {8'b0, 8'b0, 8'b0, 8'b0,
+                                   fonts[digit1_cache][32:39] << shift,
                                    fonts[digit1_cache][24:31] << shift, fonts[digit1_cache][16:23] << shift,
                                    fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift};
                     end else begin
                         display = 0;
                     end 
-                    display = display | {8'b0, 8'b0, 8'b0, 8'b0, 8'b0,
-                                        fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
-                                        fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
+                    display = display | {8'b0, 8'b0, 8'b0, 8'b0,
+                               fonts[digit2_cache][32:39] >> 8 - shift,
+                               fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
+                               fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
+
                 end else if (counter1 < 32 + (32 * (8*8))) begin
                     rowno = pidx / 8;
                     // flip bit order if even row, as matrix of LEDs
