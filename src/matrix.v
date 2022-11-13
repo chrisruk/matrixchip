@@ -69,14 +69,14 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             fonts[1] = 64'h30_70_30_30_30_30_fc_00; // 1
             lfsr = 'hffffffff;
 
-            lfsr = lfsr ^ (lfsr << 13);
+            /*lfsr = lfsr ^ (lfsr << 13);
             lfsr = lfsr ^ (lfsr >> 17);
-            lfsr = lfsr ^ (lfsr << 5);
+            lfsr = lfsr ^ (lfsr << 5);*/
             a = lfsr[0];
 
-            lfsr = lfsr ^ (lfsr << 13);
+            /*lfsr = lfsr ^ (lfsr << 13);
             lfsr = lfsr ^ (lfsr >> 17);
-            lfsr = lfsr ^ (lfsr << 5);
+            lfsr = lfsr ^ (lfsr << 5);*/
             b = lfsr[0];
         end else begin
             clock_1 = ~clock_1 ;
@@ -129,9 +129,9 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
                     if (shift == 7) begin
                         a = b;
-                        lfsr = lfsr ^ (lfsr << 13);
+                        /*lfsr = lfsr ^ (lfsr << 13);
                         lfsr = lfsr ^ (lfsr >> 17);
-                        lfsr = lfsr ^ (lfsr << 5);
+                        lfsr = lfsr ^ (lfsr << 5);*/
                         b = lfsr[0];
                         shift = 0;
                     end else begin
