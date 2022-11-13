@@ -73,7 +73,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             fonts[0] <= 64'h0;
             fonts[1] <= 64'h7c_c6_ce_de_f6_e6_7c_00; // 0
             fonts[2] <= 64'h30_70_30_30_30_30_fc_00; // 1
-            digit1 <= 0;
+            //digit1 <= 0;
             digit1_cache <= 0;
             digit2_cache <= digit1 + 1;
         end else begin
