@@ -19,7 +19,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
-    reg [0:40-1] fonts [0:2-1]; // Font array
+    reg [0:32-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
     reg [2:0] shift;            // Amount to left shift letter
 
@@ -75,15 +75,13 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                 if (counter1 < 32) begin
                     strip_1 = 0;
                     if(!first) begin
-                        display = {8'b0, 8'b0, 8'b0, 8'b0,
-                                   fonts[digit1_cache][32:39] << shift,
+                        display = {8'b0, 8'b0, 8'b0, 8'b0, 8'b0,
                                    fonts[digit1_cache][24:31] << shift, fonts[digit1_cache][16:23] << shift,
                                    fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift};
                     end else begin
                         display = 0;
                     end 
-                    display = display | {8'b0, 8'b0, 8'b0, 8'b0,
-                               fonts[digit2_cache][32:39] >> 8 - shift,
+                    display = display | {8'b0, 8'b0, 8'b0, 8'b0, 8'b0,
                                fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
                                fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
                 end else if (counter1 < 32 + (32 * (8*8))) begin
