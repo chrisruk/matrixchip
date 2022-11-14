@@ -6,29 +6,28 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 );
     wire clk = io_in[0];        // Input clock line
     wire reset = io_in[1];      // Input reset line
-    wire digit1 = io_in[2];     // First char
-    //reg [0:0] digit1 = 0;
+    wire digit1 = io_in[2];     // Digit to display
 
-    reg [0:0] digit1_cache;     // Cache of digit on input line
-    reg [0:0] digit2_cache;     // Cache of digit on input line
+    reg [0:0] digit1_cache;     // Cache of first digit
+    reg [0:0] digit2_cache;     // Cache of second digit
 
-    reg [0:0] clock_1;
-    reg [0:0] strip_1;
-    reg [0:0] first;
+    reg [0:0] clock_1;          // Clock output
+    reg [0:0] strip_1;          // Data output
+    reg [0:0] first;            // Whether this is first digit displayed, if so display 'blank' character
 
     assign io_out[0] = clock_1; // Clock output for LED matrix
     assign io_out[1] = strip_1; // Data output for LED matrix
 
     reg [0:40-1] fonts [0:2-1]; // Font array
     reg [11:0] counter1;        // Count where we are in bit pattern
-    reg [2:0] shift;            // Amount to left shift letter
+    reg [2:0] shift;            // Amount to left shift character
 
     reg [3-1:0] rowno;          // Row number in 8x8 matrix
     reg [6-1:0] idx;            // Bit index within colour register
-    reg [6-1:0] pidx;           // Bit index within letter, we apply processing on top of this
+    reg [6-1:0] pidx;           // Bit index within character, we apply processing on top of this
                                 // value to create the bitidx value
 
-    reg [6-1:0] bitidx;         // Index of bit we are within of letter
+    reg [6-1:0] bitidx;         // Index of bit we are within of character
     reg [0:32-1] ledreg1;       // Colour 1
     reg [0:32-1] ledreg2;       // Colour 2
     reg [0:64-1] display;       // Display buffer
@@ -47,7 +46,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     end
 
     always @(posedge clk) begin
-        if (counter == 2000) begin
+        if (counter == 2000) begin // Create 6kHz clock
             clk2 = ~clk2;
             counter = 0;
         end else begin
@@ -58,7 +57,6 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     always @(posedge clk2) begin
         if (reset || resetflag) begin
             resetflag <= 0;
-            //digit1 <= 1;
 `else
     always @(posedge clk) begin
         if (reset) begin
@@ -83,6 +81,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             if (clock_1 == 1) begin
                 if (counter1 < 32) begin
                     strip_1 = 0;
+                    // Provided we're not displaying first digit in scrolling marquee pattern, display digit
+                    // and shift each time
                     if(!first) begin
                         display = {8'b0, 8'b0, 8'b0, 8'b0,
                                    fonts[digit1_cache][32:39] << shift,
@@ -90,7 +90,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                                    fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift};
                     end else begin
                         display = 0;
-                    end 
+                    end
+                    // Display part of next digit too
                     display = display | {8'b0, 8'b0, 8'b0, 8'b0,
                                fonts[digit2_cache][32:39] >> 8 - shift,
                                fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
@@ -98,7 +99,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
                 end else if (counter1 < 32 + (32 * (8*8))) begin
                     rowno = pidx / 8;
-                    // flip bit order if even row, as matrix of LEDs
+                    // Flip bit order if even row, as matrix of LEDs
                     // is in a 'snake' like pattern
                     if(rowno % 2 == 0) begin
                         bitidx = ((rowno * 16) + 8) - 1 - pidx;
@@ -127,8 +128,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     idx = 0;
                     if (shift == 7) begin
                         digit1_cache = digit2_cache;
-                        //digit1 = digit1 ^ 1;
-                        digit2_cache = digit1;
+                        digit2_cache = digit1;       // Grab next digit to be displayed from input pin
                         shift = 0;
                         first = 0;
                     end else begin
