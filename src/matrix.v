@@ -71,8 +71,8 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             clock_1 <= 0;
             ledreg1 <= 32'hf0000f00;        // Number colour
             ledreg2 <= 32'hf0070000;        // Background colour
-            fonts[0] <= 40'h18_24_42_24_18; // 0
-            fonts[1] <= 40'h18_28_08_08_1c; // 1
+            fonts[0] <= 40'h18_24_24_24_18; // 0
+            fonts[1] <= 40'h18_28_08_08_3e; // 1
             digit1_cache <= 0;
             digit2_cache <= digit1;
             first = 1;
@@ -84,18 +84,24 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     // Provided we're not displaying first digit in scrolling marquee pattern, display digit
                     // and shift each time
                     if(!first) begin
-                        display = {8'b0, 8'b0, 8'b0, 8'b0,
+                        display = {16'b0,
                                    fonts[digit1_cache][32:39] << shift,
-                                   fonts[digit1_cache][24:31] << shift, fonts[digit1_cache][16:23] << shift,
-                                   fonts[digit1_cache][8:15]  << shift, fonts[digit1_cache][0:7]   << shift};
+                                   fonts[digit1_cache][24:31] << shift,
+                                   fonts[digit1_cache][16:23] << shift,
+                                   fonts[digit1_cache][8:15]  << shift,
+                                   fonts[digit1_cache][0:7]   << shift,
+                                   8'b0};
                     end else begin
                         display = 0;
                     end
                     // Display part of next digit too
-                    display = display | {8'b0, 8'b0, 8'b0, 8'b0,
-                               fonts[digit2_cache][32:39] >> 8 - shift,
-                               fonts[digit2_cache][24:31] >> 8 - shift, fonts[digit2_cache][16:23] >> 8 - shift,
-                               fonts[digit2_cache][8:15]  >> 8 - shift, fonts[digit2_cache][0:7]   >> 8 - shift};
+                    display = display | {16'b0,
+                                         fonts[digit2_cache][32:39] >> 8 - shift,
+                                         fonts[digit2_cache][24:31] >> 8 - shift,
+                                         fonts[digit2_cache][16:23] >> 8 - shift,
+                                         fonts[digit2_cache][8:15]  >> 8 - shift,
+                                         fonts[digit2_cache][0:7]   >> 8 - shift,
+                                         8'b0};
 
                 end else if (counter1 < 32 + (32 * (8*8))) begin
                     rowno = pidx / 8;
