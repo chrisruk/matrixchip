@@ -10,6 +10,7 @@ module tb (
     // testbench is controlled by test.py
     input clk,
     input rst,
+    input digit1,
     output clock_1,
     output strip_1
    );
@@ -22,7 +23,7 @@ module tb (
     end
 
     // wire up the inputs and outputs
-    wire [7:0] inputs = {6'b0, rst, clk};
+    wire [7:0] inputs = {5'b0, digit1, rst, clk};
     wire [7:0] outputs = {6'b0, strip_1, clock_1};
 
     // instantiate the DUT
