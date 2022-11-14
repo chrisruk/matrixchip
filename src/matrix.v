@@ -35,9 +35,16 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
 
 `ifdef FPGA
     // Generate 6kHz clock from input 12MHz clock
-    reg [0:0] clk2 = 0;
-    integer counter = 0;
-    reg [0:0] resetflag = 1;    // Reset flag, only used by FPGA
+    reg [0:0] clk2;
+    integer counter;
+    reg [0:0] resetflag;
+
+    initial begin
+        first = 1;              // For FPGA for some reason need to have this here too, otherwise we get duplicate first value
+        clk2 = 0;
+        counter = 0;
+        resetflag  = 1;         // Reset flag, only used by FPGA
+    end
 
     always @(posedge clk) begin
         if (counter == 2000) begin
@@ -51,6 +58,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
     always @(posedge clk2) begin
         if (reset || resetflag) begin
             resetflag <= 0;
+            //digit1 <= 1;
 `else
     always @(posedge clk) begin
         if (reset) begin
@@ -59,13 +67,14 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
             shift <= 0;
             counter1 <= 0;
             idx <= 0;
+            bitidx <= 0;
             pidx <= 0;
             strip_1 <= 0;
             clock_1 <= 0;
-            ledreg1 <= 32'hf0000f00;      // Number colour
-            ledreg2 <= 32'hf0070000;      // Background colour
-            fonts[0] <= 40'hce_de_f6_e6_7c; // 0
-            fonts[1] <= 40'h30_30_30_30_fc; // 1
+            ledreg1 <= 32'hf0000f00;        // Number colour
+            ledreg2 <= 32'hf0070000;        // Background colour
+            fonts[0] <= 40'h18_24_42_24_18; // 0
+            fonts[1] <= 40'h18_28_08_08_1c; // 1
             digit1_cache <= 0;
             digit2_cache <= digit1;
             first = 1;
@@ -118,6 +127,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                     idx = 0;
                     if (shift == 7) begin
                         digit1_cache = digit2_cache;
+                        //digit1 = digit1 ^ 1;
                         digit2_cache = digit1;
                         shift = 0;
                         first = 0;
