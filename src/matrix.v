@@ -85,7 +85,7 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                         // Provided we're not displaying first digit in scrolling marquee pattern, display digit
                         // and shift each time
                         if(!first) begin
-                            display = {16'b0,
+                            display <= {16'b0,
                                     fonts[digit1_cache][32:39] << shift,
                                     fonts[digit1_cache][24:31] << shift,
                                     fonts[digit1_cache][16:23] << shift,
@@ -93,10 +93,11 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                                     fonts[digit1_cache][0:7]   << shift,
                                     8'b0};
                         end else begin
-                            display = 0;
+                            display <= 0;
                         end
+                    end else if(counter1 == 2) begin
                         // Display part of next digit too
-                        display = display | {16'b0,
+                        display <= display | {16'b0,
                                             fonts[digit2_cache][32:39] >> 8 - shift,
                                             fonts[digit2_cache][24:31] >> 8 - shift,
                                             fonts[digit2_cache][16:23] >> 8 - shift,
