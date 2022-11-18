@@ -124,12 +124,12 @@ module chrisruk_matrix #( parameter MAX_COUNT = 1000 ) (
                         strip_1 <= ledreg2[idx];
                     end
 
-                    idx = idx + 1;
-                    if (idx == 32) begin
+                    if (idx == 31) begin
                         idx <= 0;
                         pidx <= pidx + 1;
+                    end else begin
+                        idx <= idx + 1;
                     end
-
                     counter1 <= counter1 + 1;
                 end else if (counter1 < 32 + (32 * (8*8)) + 32 + 32) begin
                     // Need zeros at end of pattern
