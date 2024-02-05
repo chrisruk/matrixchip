@@ -12,3 +12,9 @@ Also functions on an iCEstick FPGA Evaluation Kit with 3.3V to 5V logic level co
 The following animation (7fps animated gif) shows the results from the FPGA prototype
 
 ![animation](/images/animation.gif)
+
+## It works!
+
+The following video shows the actual design in Tiny Tapeout silicon
+
+https://github.com/chrisruk/matrixchip/assets/19668907/90b13dcb-66f7-412f-9b49-ce5f2f246842
